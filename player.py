@@ -5,7 +5,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos, constraint, speed):
         super().__init__()
         self.image = pygame.image.load("ship.png")
-        self.rect = self.image.get_rect(midbottom = pos)
+        self.rect = self.image.get_rect(midbottom=pos)
         self.speed = speed
         self.max_x_constraint = constraint
         self.max_y_constraint = constraint

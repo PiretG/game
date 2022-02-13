@@ -1,10 +1,9 @@
 import sys
-
 import pygame
 
 
 class TextInputBox(pygame.sprite.Sprite):
-    def __init__(self, x, y, w):
+    def __init__(self, x, y, w, correct_answer):
         super().__init__()
         self.color = (255, 255, 255)
         self.backcolor = None
@@ -12,7 +11,8 @@ class TextInputBox(pygame.sprite.Sprite):
         self.width = w
         self.font = pygame.font.SysFont('Arial', 20)
         self.active = False
-        self.text = "Click and type here: "
+        self.text = "Answer: "
+        self.correct_answer = correct_answer
         self.render_text()
 
     def render_text(self):
@@ -22,7 +22,7 @@ class TextInputBox(pygame.sprite.Sprite):
             self.image.fill(self.backcolor)
         self.image.blit(t_surf, (5, 5))
         pygame.draw.rect(self.image, self.color, self.image.get_rect().inflate(-2, -2), 2)
-        self.rect = self.image.get_rect(topleft = self.pos)
+        self.rect = self.image.get_rect(topleft=self.pos)
 
     def update(self, event_list):
         for event in event_list:
@@ -31,11 +31,18 @@ class TextInputBox(pygame.sprite.Sprite):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and not self.active:
                 self.active = self.rect.collidepoint(event.pos)
-            if event.type == pygame.KEYDOWN and self.active:
+            if event.type == pygame.KEYUP and self.active:
                 if event.key == pygame.K_RETURN:
                     self.active = False
+                    self.check_answer()
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
                 self.render_text()
+
+    def check_answer(self):
+        if self.text == "Answer: " + self.correct_answer or self.text == "Try again: " + self.correct_answer:
+            self.kill()
+        else:
+            self.text = "Try again: "

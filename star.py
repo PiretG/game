@@ -1,4 +1,5 @@
-import pygame, random
+import pygame
+import random
 
 
 class Star(pygame.sprite.Sprite):
@@ -20,12 +21,3 @@ class Star(pygame.sprite.Sprite):
 
     def collision(self, ship_x, ship_y):
         return abs(self.rect.x - ship_x) <= 20 and abs(self.rect.y - ship_y) <= 20
-
-    def constraint(self, height):
-        if self.y > height:
-            self.kill()
-
-    def kill(self):
-        self.y = 0
-        self.x = random.uniform(0, 640)
-        #self.vy = random.uniform(1, 2)

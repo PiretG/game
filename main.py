@@ -3,36 +3,68 @@ import random
 import sys
 
 from player import Player
-from question import Question
+from question import QuestionSprite
 from star import Star
 from textinputbox import TextInputBox
+from questions import level_1_questions
 
 
 class Game:
     def __init__(self, x, y, speed):
-        #player setup
+        # Player setup
         player_sprite = Player((width / 2, height), width, speed)
         self.player = pygame.sprite.GroupSingle(player_sprite)
-        #star setup
+
+        # Star setup
         star_sprite = Star(x, y, speed)
         self.star = pygame.sprite.GroupSingle(star_sprite)
-        #question setup
-        question_sprite = Question(250, 200, "This is Question nr 1")
-        self.question = pygame.sprite.GroupSingle(question_sprite)
-        #textbox setup
-        box_sprite = TextInputBox(100, 250, 300)
-        self.box = pygame.sprite.GroupSingle(box_sprite)
 
-    def run(self, event_list):
+        # Questions list setup
+        questions = level_1_questions
+        random.shuffle(level_1_questions)
+
+        # Create group of all questions and group of answer boxes
+        questions_list = []
+        text_boxes = []
+        for q in questions:
+            q_sprite = QuestionSprite(250, 200, q.question)
+            t_sprite = TextInputBox(100, 250, 250, q.answer)
+            questions_list.append(pygame.sprite.GroupSingle(q_sprite))
+            text_boxes.append(pygame.sprite.GroupSingle(t_sprite))
+        self.questions_list = questions_list
+        self.text_boxes = text_boxes
+
+    def run(self):
         self.player.update()
         self.star.update(height, width, self.player.sprite.rect.x, self.player.sprite.rect.y)
-        self.box.update(event_list)
         self.player.draw(screen)
         self.star.draw(screen)
-        self.box.draw(screen)
 
-        self.question.update()
-        self.question.draw(screen)
+    def collision(self):
+        return abs(self.player.sprite.rect.x - self.star.sprite.rect.x) <= 20 \
+               and abs(self.player.sprite.rect.y - self.star.sprite.rect.y) <= 20
+
+    def ask_question(self, event_list):
+        # Take first question and textbox with correct answer from list
+        question = self.questions_list[0]
+        text_box = self.text_boxes[0]
+        question.draw(screen)
+        text_box.draw(screen)
+        text_box.update(event_list)
+
+        # Check if sprite has been killed
+        if len(text_box.sprites()) == 0:
+            # Remove question sprite
+            question.sprite.kill()
+
+            # Make star appear
+            self.star.sprite.rect.x = random.randint(10, width)
+            self.star.sprite.rect.y = 5
+            self.star.draw(screen)
+
+            # Remove used question and text box from questions list
+            self.questions_list.pop(0)
+            self.text_boxes.pop(0)
 
 
 if __name__ == '__main__':
@@ -50,8 +82,7 @@ if __name__ == '__main__':
     time = pygame.time.Clock()
     game = Game(star_x, star_y, speed)
 
-    fly = True
-    while fly:
+    while len(game.questions_list) > 0:
         time.tick(40)
         screen.fill((0, 0, 0))
         screen.blit(bg, (0, n))
@@ -69,5 +100,9 @@ if __name__ == '__main__':
                 pygame.quit()
                 sys.exit()
 
-        game.run(event_list)
+        if game.collision():
+            game.ask_question(event_list)
+        else:
+            game.run()
+
         pygame.display.update()
