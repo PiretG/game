@@ -3,7 +3,7 @@ import pygame
 
 
 class TextInputBox(pygame.sprite.Sprite):
-    def __init__(self, x, y, w, correct_answer):
+    def __init__(self, x, y, w, correct_answer, game):
         super().__init__()
         self.color = (255, 255, 255)
         self.backcolor = None
@@ -14,6 +14,7 @@ class TextInputBox(pygame.sprite.Sprite):
         self.text = "Answer: "
         self.correct_answer = correct_answer
         self.render_text()
+        self.game = game
 
     def render_text(self):
         t_surf = self.font.render(self.text, True, self.color, self.backcolor)
@@ -42,6 +43,8 @@ class TextInputBox(pygame.sprite.Sprite):
                 self.render_text()
 
     def check_answer(self):
+        if self.text == "Answer: " + self.correct_answer:
+            self.game.points += 1
         if self.text == "Answer: " + self.correct_answer or self.text == "Try again: " + self.correct_answer:
             self.kill()
         else:
