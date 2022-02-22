@@ -8,10 +8,12 @@ from star import Star
 from textinputbox import TextInputBox
 from questions import level_1_questions
 from obstacle import Asteroid
+from introscreen import Button
 
 
 class Game:
     def __init__(self, x, y, speed):
+        self.intro = True
         self.points = 0
 
         # Player setup
@@ -84,6 +86,18 @@ class Game:
             self.questions_list.pop(0)
             self.text_boxes.pop(0)
 
+    def intro_screen(self):
+        button = Button("Start", (200, 200), 30, game, screen, "navy")
+        while self.intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                if button.mouse_click(event):
+                    button.close()
+            button.pack()
+            time.tick(40)
+            pygame.display.update()
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -100,6 +114,7 @@ if __name__ == '__main__':
 
     time = pygame.time.Clock()
     game = Game(star_x, star_y, speed)
+    game.intro_screen()
 
     while len(game.questions_list) > 0:
         time.tick(40)
