@@ -6,15 +6,18 @@ from player import Player
 from question import QuestionSprite
 from star import Star
 from textinputbox import TextInputBox
-from questions import level_1_questions
+from questions import level_1_questions, level_2_questions
 from obstacle import Asteroid
-from introscreen import Button
+from introscreen import Button, Button2
 
 
 class Game:
     def __init__(self, x, y, speed):
         self.intro = True
         self.points = 0
+        self.level = 0
+        self.questions_list = []
+        self.text_boxes = []
 
         # Player setup
         player_sprite = Player((width / 2, height), width, speed)
@@ -34,21 +37,6 @@ class Game:
             asteroid_sprite = pygame.sprite.GroupSingle(asteroid)
             asteroid_sprite.draw(screen)
             self.asteroids.append(asteroid_sprite)
-
-        # Questions list setup
-        questions = level_1_questions
-        random.shuffle(level_1_questions)
-
-        # Create group of all questions and group of answer boxes
-        questions_list = []
-        text_boxes = []
-        for q in questions:
-            q_sprite = QuestionSprite(250, 200, q.question)
-            t_sprite = TextInputBox(100, 250, 250, q.answer, self)
-            questions_list.append(pygame.sprite.GroupSingle(q_sprite))
-            text_boxes.append(pygame.sprite.GroupSingle(t_sprite))
-        self.questions_list = questions_list
-        self.text_boxes = text_boxes
 
     def run(self):
         self.player.update()
@@ -87,16 +75,60 @@ class Game:
             self.text_boxes.pop(0)
 
     def intro_screen(self):
-        button = Button("Start", (200, 200), 30, game, screen, "navy")
+        button = Button("Start", (220, 200), 30, game, screen, "navy")
+        button2 = Button2("Exit", (220, 300), 30, game, screen, "navy")
         while self.intro:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 if button.mouse_click(event):
-                    button.close()
+                    button.close(0)
+                if button2.mouse_click(event):
+                    button2.close()
             button.pack()
+            button2.pack()
             time.tick(40)
             pygame.display.update()
+
+    def choose_level(self):
+        button_level_1 = Button("Level 1", (220, 100), 30, game, screen, "navy")
+        button_level_2 = Button("Level 2", (220, 200), 30, game, screen, "navy")
+        button_exit = Button2("Exit", (220, 300), 30, game, screen, "navy")
+        while self.level == 0:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                if button_level_1.mouse_click(event):
+                    button_level_1.close(1)
+                if button_level_2.mouse_click(event):
+                    button_level_2.close(2)
+                if button_exit.mouse_click(event):
+                    button_exit.close()
+            button_level_1.pack()
+            button_level_2.pack()
+            button_exit.pack()
+            time.tick(40)
+            pygame.display.update()
+        game.load_questions()
+
+    def load_questions(self):
+        # Questions list setup
+        if self.level == 1:
+            questions = level_1_questions
+        else:
+            questions = level_2_questions
+        random.shuffle(questions)
+
+        # Create group of all questions and group of answer boxes
+        questions_list = []
+        text_boxes = []
+        for q in questions:
+            q_sprite = QuestionSprite(250, 200, q.question)
+            t_sprite = TextInputBox(100, 250, 250, q.answer, self)
+            questions_list.append(pygame.sprite.GroupSingle(q_sprite))
+            text_boxes.append(pygame.sprite.GroupSingle(t_sprite))
+        self.questions_list = questions_list
+        self.text_boxes = text_boxes
 
 
 if __name__ == '__main__':
@@ -115,6 +147,7 @@ if __name__ == '__main__':
     time = pygame.time.Clock()
     game = Game(star_x, star_y, speed)
     game.intro_screen()
+    game.choose_level()
 
     while len(game.questions_list) > 0:
         time.tick(40)

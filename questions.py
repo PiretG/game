@@ -1,5 +1,8 @@
 from question import Question
 
+level_2_questions = [Question("Mis on 10x100? ", "1000"),
+                     Question("Mis on 20x100? ", "2000")]
+
 level_1_questions = [Question("Mis on 1x1? ", "1"),
                      Question("Mis on 1x2? ", "2"),
                      Question("Mis on 1x3? ", "3"),
