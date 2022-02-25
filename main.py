@@ -49,8 +49,9 @@ class Game:
             asteroid.draw(screen)
 
     def collision(self):
-        return abs(self.player.sprite.rect.x - self.star.sprite.rect.x) <= 50 \
-               and abs(self.player.sprite.rect.y - self.star.sprite.rect.y) <= 20
+        return ((0 >= self.player.sprite.rect.x - self.star.sprite.rect.x >= -40)
+                or (0 <= self.player.sprite.rect.x - self.star.sprite.rect.x <= 20)) \
+                and abs(self.player.sprite.rect.y - self.star.sprite.rect.y) <= 20
 
     def ask_question(self, event_list):
         # Take first question and textbox with correct answer from list

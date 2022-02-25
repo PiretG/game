@@ -102,4 +102,4 @@ level_1_questions = [Question("Mis on 1x1? ", "1"),
                      Question("Mis on 10x7? ", "70"),
                      Question("Mis on 10x8? ", "80"),
                      Question("Mis on 10x9? ", "90"),
-                     Question("Mis on 10x10? ", "10")]
+                     Question("Mis on 10x10? ", "100")]
