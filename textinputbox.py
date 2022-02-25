@@ -44,6 +44,8 @@ class TextInputBox(pygame.sprite.Sprite):
 
     def check_answer(self):
         if self.text == "Answer: " + self.correct_answer:
+            self.game.points += 2
+        if self.text == "Try again: " + self.correct_answer:
             self.game.points += 1
         if self.text == "Answer: " + self.correct_answer or self.text == "Try again: " + self.correct_answer:
             self.kill()

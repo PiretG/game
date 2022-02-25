@@ -31,7 +31,7 @@ class Game:
         self.asteroids = []
         asteroid_y = 5
         for _ in range(10):
-            asteroid = Asteroid(random.randint(10, width), asteroid_y, speed)
+            asteroid = Asteroid(random.randint(10, width), asteroid_y, speed, self)
             # Set lag so that wouldn't appear all at once
             asteroid_y -= 30
             asteroid_sprite = pygame.sprite.GroupSingle(asteroid)
@@ -49,8 +49,7 @@ class Game:
             asteroid.draw(screen)
 
     def collision(self):
-        return ((0 >= self.player.sprite.rect.x - self.star.sprite.rect.x >= -40)
-                or (0 <= self.player.sprite.rect.x - self.star.sprite.rect.x <= 20)) \
+        return (-40 <= self.player.sprite.rect.x - self.star.sprite.rect.x <= 20) \
                 and abs(self.player.sprite.rect.y - self.star.sprite.rect.y) <= 20
 
     def ask_question(self, event_list):
@@ -76,7 +75,7 @@ class Game:
             self.text_boxes.pop(0)
 
     def intro_screen(self):
-        button = Button("Start", (220, 200), 30, game, screen, "navy")
+        button = Button("Start", (215, 200), 30, game, screen, "navy")
         button2 = Button2("Exit", (220, 300), 30, game, screen, "navy")
         while self.intro:
             for event in pygame.event.get():
@@ -92,8 +91,8 @@ class Game:
             pygame.display.update()
 
     def choose_level(self):
-        button_level_1 = Button("Level 1", (220, 100), 30, game, screen, "navy")
-        button_level_2 = Button("Level 2", (220, 200), 30, game, screen, "navy")
+        button_level_1 = Button("Level 1", (195, 100), 30, game, screen, "navy")
+        button_level_2 = Button("Level 2", (195, 200), 30, game, screen, "navy")
         button_exit = Button2("Exit", (220, 300), 30, game, screen, "navy")
         while self.level == 0:
             for event in pygame.event.get():
