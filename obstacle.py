@@ -10,12 +10,14 @@ class Asteroid(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midtop=(x, y))
         self.speed = speed - 1
         self.game = game
+        self.sound = pygame.mixer.Sound('collision.wav')
 
     def appear(self, x, y):
         self.rect = self.image.get_rect(midtop=(x, y))
 
     def update(self, height, width, ship_x, ship_y):
         if self.collision(ship_x, ship_y):
+            self.sound.play()
             self.game.points -= 1
         if self.rect.y >= height or self.collision(ship_x, ship_y):
             self.appear(random.randint(10, width), 5)

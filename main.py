@@ -138,6 +138,9 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode([width, height])
     background = pygame.image.load("background.jpg")
     bg = pygame.transform.scale(background, (width, height))
+    pygame.mixer.music.load("background_music.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.4)
 
     n = 0
     star_x = random.randint(10, width)
