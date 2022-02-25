@@ -10,6 +10,7 @@ class Star(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midtop=(x, y))
         self.speed = speed
         self.sound = pygame.mixer.Sound('bonus.wav')
+        self.sound.set_volume(0.2)
 
     def appear(self, x, y):
         self.rect = self.image.get_rect(midtop=(x, y))
