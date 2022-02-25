@@ -30,9 +30,7 @@ class TextInputBox(pygame.sprite.Sprite):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.active:
-                self.active = self.rect.collidepoint(event.pos)
-            if event.type == pygame.KEYUP and self.active:
+            if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self.active = False
                     self.check_answer()
