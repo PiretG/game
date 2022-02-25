@@ -11,6 +11,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.speed = speed - 1
         self.game = game
         self.sound = pygame.mixer.Sound('collision.wav')
+        self.sound.set_volume(0.5)
 
     def appear(self, x, y):
         self.rect = self.image.get_rect(midtop=(x, y))
