@@ -8,16 +8,20 @@ from star import Star
 from textinputbox import TextInputBox
 from questions import level_1_questions, level_2_questions
 from obstacle import Asteroid
-from introscreen import Button, Button2
+from buttons import Button, Button2, Button3
 
 
 class Game:
     def __init__(self, x, y, speed):
         self.intro = True
+        self.end = False
         self.points = 0
         self.level = 0
         self.questions_list = []
         self.text_boxes = []
+        self.screen = pygame.display.set_mode([width, height])
+        self.background = pygame.image.load("background.jpg")
+        self.bg = pygame.transform.scale(self.background, (width, height))
 
         # Player setup
         player_sprite = Player((width / 2, height), width, speed)
@@ -35,18 +39,18 @@ class Game:
             # Set lag so that wouldn't appear all at once
             asteroid_y -= 30
             asteroid_sprite = pygame.sprite.GroupSingle(asteroid)
-            asteroid_sprite.draw(screen)
+            asteroid_sprite.draw(self.screen)
             self.asteroids.append(asteroid_sprite)
 
     def run(self):
         self.player.update()
         self.star.update(height, width, self.player.sprite.rect.x, self.player.sprite.rect.y)
-        self.player.draw(screen)
-        self.star.draw(screen)
+        self.player.draw(self.screen)
+        self.star.draw(self.screen)
 
         for asteroid in self.asteroids:
             asteroid.update(height, width, self.player.sprite.rect.x, self.player.sprite.rect.y)
-            asteroid.draw(screen)
+            asteroid.draw(self.screen)
 
     def collision(self):
         return (-40 <= self.player.sprite.rect.x - self.star.sprite.rect.x <= 20) \
@@ -56,8 +60,8 @@ class Game:
         # Take first question and textbox with correct answer from list
         question = self.questions_list[0]
         text_box = self.text_boxes[0]
-        question.draw(screen)
-        text_box.draw(screen)
+        question.draw(self.screen)
+        text_box.draw(self.screen)
         text_box.update(event_list)
 
         # Check if sprite has been killed
@@ -68,15 +72,15 @@ class Game:
             # Make star appear
             self.star.sprite.rect.x = random.randint(10, width)
             self.star.sprite.rect.y = 5
-            self.star.draw(screen)
+            self.star.draw(self.screen)
 
             # Remove used question and text box from questions list
             self.questions_list.pop(0)
             self.text_boxes.pop(0)
 
     def intro_screen(self):
-        button = Button("Start", (215, 200), 30, game, screen, "navy")
-        button2 = Button2("Exit", (220, 300), 30, game, screen, "navy")
+        button = Button("Start", (215, 200), 30, game, self.screen, "navy")
+        button2 = Button2("Exit", (220, 300), 30, game, self.screen, "navy")
         while self.intro:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -90,10 +94,32 @@ class Game:
             time.tick(40)
             pygame.display.update()
 
+    def end_screen(self):
+        self.end = True
+        self.screen = pygame.display.set_mode([width, height])
+
+        font = pygame.font.SysFont('Arial', 30)
+        text = font.render("Punktid: " + str(game.points), True, (255, 255, 255))
+        button_play_again = Button3("Play again", (195, 200), 30, game, self.screen, "navy")
+        button_exit = Button2("Exit", (220, 300), 30, game, self.screen, "navy")
+        while self.end:
+            for event in pygame.event.get():
+                self.screen.blit(text, (195, 100))
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                if button_play_again.mouse_click(event):
+                    button_play_again.close()
+                if button_exit.mouse_click(event):
+                    button_exit.close()
+            button_play_again.pack()
+            button_exit.pack()
+            time.tick(40)
+            pygame.display.update()
+
     def choose_level(self):
-        button_level_1 = Button("Level 1", (195, 100), 30, game, screen, "navy")
-        button_level_2 = Button("Level 2", (195, 200), 30, game, screen, "navy")
-        button_exit = Button2("Exit", (220, 300), 30, game, screen, "navy")
+        button_level_1 = Button("Level 1", (195, 100), 30, game, self.screen, "navy")
+        button_level_2 = Button("Level 2", (195, 200), 30, game, self.screen, "navy")
+        button_exit = Button2("Exit", (220, 300), 30, game, self.screen, "navy")
         while self.level == 0:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -130,53 +156,57 @@ class Game:
         self.questions_list = questions_list
         self.text_boxes = text_boxes
 
+    def play(self):
+        self.screen = pygame.display.set_mode([width, height])
+        pygame.mixer.music.load("background_music.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.4)
+        n = 0
+
+        game.intro_screen()
+        game.choose_level()
+
+        while len(game.questions_list) > 0:
+            time.tick(40)
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.bg, (0, n))
+            self.screen.blit(self.bg, (0, -height + n))
+
+            if n == height:
+                self.screen.blit(self.bg, (0, -height + n))
+                n = 0
+            n += 1
+
+            font = pygame.font.SysFont('Arial', 20)
+            text = font.render("Punktid: " + str(game.points), True, (255, 255, 255))
+            self.screen.blit(text, (0, 0))
+
+            event_list = pygame.event.get()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            if game.collision():
+                game.ask_question(event_list)
+            else:
+                game.run()
+
+            pygame.display.update()
+
+        game.end_screen()
+
 
 if __name__ == '__main__':
     pygame.init()
     width = 500
     height = 500
-    screen = pygame.display.set_mode([width, height])
-    background = pygame.image.load("background.jpg")
-    bg = pygame.transform.scale(background, (width, height))
-    pygame.mixer.music.load("background_music.mp3")
-    pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(0.4)
-
-    n = 0
     star_x = random.randint(10, width)
     star_y = 5
     speed = 3
-
-    time = pygame.time.Clock()
     game = Game(star_x, star_y, speed)
-    game.intro_screen()
-    game.choose_level()
+    time = pygame.time.Clock()
 
-    while len(game.questions_list) > 0:
-        time.tick(40)
-        screen.fill((0, 0, 0))
-        screen.blit(bg, (0, n))
-        screen.blit(bg, (0, -height + n))
-
-        if n == height:
-            screen.blit(bg, (0, -height + n))
-            n = 0
-        n += 1
-
-        font = pygame.font.SysFont('Arial', 20)
-        text = font.render("Punktid: " + str(game.points), True, (255, 255, 255))
-        screen.blit(text, (0, 0))
-
-        event_list = pygame.event.get()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        if game.collision():
-            game.ask_question(event_list)
-        else:
-            game.run()
-
-        pygame.display.update()
+    while not game.end:
+        game.play()
