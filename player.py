@@ -1,10 +1,21 @@
 import pygame
+import base64
+
+from io import BytesIO
+from PIL import Image
+from pic2str import ship
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, constraint, speed):
         super().__init__()
-        self.image = pygame.image.load("ship.png")
+
+        # Load byte data
+        byte_data = base64.b64decode(ship)
+        image = Image.open(BytesIO(byte_data))
+        ship_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+
+        self.image = ship_image
         self.rect = self.image.get_rect(midbottom=pos)
         self.speed = speed
         self.max_x_constraint = constraint

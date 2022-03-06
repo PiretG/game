@@ -1,12 +1,23 @@
 import pygame
 import random
+import base64
+
+from io import BytesIO
+from PIL import Image
+from pic2str import star
 
 
 class Star(pygame.sprite.Sprite):
 
     def __init__(self, x, y, speed):
         super().__init__()
-        self.image = pygame.image.load("star.png")
+
+        # Load byte data
+        byte_data = base64.b64decode(star)
+        image = Image.open(BytesIO(byte_data))
+        star_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+
+        self.image = star_image
         self.rect = self.image.get_rect(midtop=(x, y))
         self.speed = speed
         self.sound = pygame.mixer.Sound('bonus.wav')

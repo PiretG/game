@@ -1,12 +1,24 @@
+import base64
+from io import BytesIO
+
 import pygame
 import random
+
+from PIL import Image
+from pic2str import asteroid
 
 
 class Asteroid(pygame.sprite.Sprite):
 
     def __init__(self, x, y, speed, game):
         super().__init__()
-        self.image = pygame.image.load("asteroid.png")
+
+        # Load byte data
+        byte_data = base64.b64decode(asteroid)
+        image = Image.open(BytesIO(byte_data))
+        asteroid_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+
+        self.image = asteroid_image
         self.rect = self.image.get_rect(midtop=(x, y))
         self.speed = speed - 1
         self.game = game

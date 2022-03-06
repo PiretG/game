@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import base64
 
 from player import Player
 from question import QuestionSprite
@@ -9,6 +10,9 @@ from textinputbox import TextInputBox
 from questions import level_1_questions, level_2_questions
 from obstacle import Asteroid
 from buttons import Button, Button2, Button3
+from io import BytesIO
+from PIL import Image
+from pic2str import background
 
 
 class Game:
@@ -20,7 +24,13 @@ class Game:
         self.questions_list = []
         self.text_boxes = []
         self.screen = pygame.display.set_mode([width, height])
-        self.background = pygame.image.load("background.jpg")
+
+        # Load byte data
+        byte_data = base64.b64decode(background)
+        image = Image.open(BytesIO(byte_data))
+        background_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+
+        self.background = background_image
         self.bg = pygame.transform.scale(self.background, (width, height))
 
         # Player setup
@@ -198,7 +208,30 @@ class Game:
         game.end_screen()
 
 
+"""
+# Function used to import pictures and sound files to strings
+
+def pic2str(file, function_name):
+    pic = open(file, 'rb')
+    content = '{} = {}\n'.format(function_name, base64.b64encode(pic.read()))
+    pic.close()
+
+    with open('pic2str.py', 'a') as f:
+        f.write(content)
+"""
+
+
 if __name__ == '__main__':
+    # Commands used to import pictures and sound files to strings
+
+    # pic2str('background.jpg', 'background')
+    # pic2str('asteroid.png', 'asteroid')
+    # pic2str('star.png', 'star')
+    # pic2str('ship.png', 'ship')
+    # pic2str('bonus.wav', 'bonus')
+    # pic2str('collision.wav', 'collision')
+    # pic2str('background_music.mp3', 'background_music')
+
     pygame.init()
     width = 500
     height = 500
