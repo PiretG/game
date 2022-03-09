@@ -6,6 +6,7 @@ import random
 
 from PIL import Image
 from pic2str import asteroid
+from pic2str import collision
 
 
 class Asteroid(pygame.sprite.Sprite):
@@ -13,17 +14,21 @@ class Asteroid(pygame.sprite.Sprite):
     def __init__(self, x, y, speed, game):
         super().__init__()
 
-        # Load byte data
+        # Load picture byte data
         byte_data = base64.b64decode(asteroid)
         image = Image.open(BytesIO(byte_data))
         asteroid_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
 
         self.image = asteroid_image
         self.rect = self.image.get_rect(midtop=(x, y))
+
+        # Load music byte data
+        music_data = base64.b64decode(collision)
+        self.sound = pygame.mixer.Sound(music_data)
+        self.sound.set_volume(0.5)
+
         self.speed = speed - 1
         self.game = game
-        self.sound = pygame.mixer.Sound('collision.wav')
-        self.sound.set_volume(0.5)
 
     def appear(self, x, y):
         self.rect = self.image.get_rect(midtop=(x, y))
