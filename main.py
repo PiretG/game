@@ -13,6 +13,7 @@ from buttons import Button, Button2, Button3
 from io import BytesIO
 from PIL import Image
 from pic2str import background
+from pic2str import background_music
 
 
 class Game:
@@ -168,7 +169,8 @@ class Game:
 
     def play(self):
         self.screen = pygame.display.set_mode([width, height])
-        pygame.mixer.music.load("background_music.mp3")
+        music_data = base64.b64decode(background_music)
+        pygame.mixer.music.load(BytesIO(music_data))
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.4)
         n = 0
@@ -208,30 +210,7 @@ class Game:
         game.end_screen()
 
 
-"""
-# Function used to import pictures and sound files to strings
-
-def pic2str(file, function_name):
-    pic = open(file, 'rb')
-    content = '{} = {}\n'.format(function_name, base64.b64encode(pic.read()))
-    pic.close()
-
-    with open('pic2str.py', 'a') as f:
-        f.write(content)
-"""
-
-
 if __name__ == '__main__':
-    # Commands used to import pictures and sound files to strings
-
-    # pic2str('background.jpg', 'background')
-    # pic2str('asteroid.png', 'asteroid')
-    # pic2str('star.png', 'star')
-    # pic2str('ship.png', 'ship')
-    # pic2str('bonus.wav', 'bonus')
-    # pic2str('collision.wav', 'collision')
-    # pic2str('background_music.mp3', 'background_music')
-
     pygame.init()
     width = 500
     height = 500
