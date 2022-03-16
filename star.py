@@ -16,7 +16,7 @@ class Star(pygame.sprite.Sprite):
         # Load picture byte data
         byte_data = base64.b64decode(star)
         image = Image.open(BytesIO(byte_data))
-        star_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+        star_image = pygame.image.frombuffer(image.tobytes(), image.size, image.mode)
 
         self.image = star_image
         self.rect = self.image.get_rect(midtop=(x, y))

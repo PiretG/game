@@ -29,7 +29,7 @@ class Game:
         # Load byte data
         byte_data = base64.b64decode(background)
         image = Image.open(BytesIO(byte_data))
-        background_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+        background_image = pygame.image.frombuffer(image.tobytes(), image.size, image.mode)
 
         self.background = background_image
         self.bg = pygame.transform.scale(self.background, (width, height))

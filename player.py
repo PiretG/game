@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         # Load byte data
         byte_data = base64.b64decode(ship)
         image = Image.open(BytesIO(byte_data))
-        ship_image = pygame.image.fromstring(image.tobytes(), image.size, image.mode)
+        ship_image = pygame.image.frombuffer(image.tobytes(), image.size, image.mode)
 
         self.image = ship_image
         self.rect = self.image.get_rect(midbottom=pos)
